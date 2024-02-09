@@ -86,15 +86,12 @@ func (r *Repository) UpdateUserProfile(ctx context.Context, input UpdateUserProf
 		params = append(params, input.FullName)
 		idx++
 	}
-
 	if input.PhoneNumber != "" {
 		query += fmt.Sprintf("phone_number = $%d,", idx)
 		params = append(params, input.PhoneNumber)
 		idx++
 	}
-
 	query += fmt.Sprintf(" updated_at = NOW(),")
-
 	query = query[:len(query)-1] + fmt.Sprintf(" WHERE id = $%d", idx)
 	params = append(params, input.Id)
 

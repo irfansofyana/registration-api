@@ -44,7 +44,7 @@ func (s *Server) PatchUserProfile(ctx echo.Context) error {
 			return newInternalServerError(ctx, err)
 		}
 		if existingUser != nil {
-			return newError(ctx, http.StatusBadRequest, "Phone number already registered")
+			return newError(ctx, http.StatusConflict, "Conflict. Phone number already registered")
 		}
 		updateRequest.PhoneNumber = *req.PhoneNumber
 	}
