@@ -59,6 +59,8 @@ To run test, run the following command:
 make test
 ```
 
+make sure you have run the `make init` command before running the tests.
+
 ## Clean Up
 
 To clean up the project, run the following command:
