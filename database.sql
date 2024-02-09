@@ -18,7 +18,12 @@ CREATE TABLE users (
     full_name VARCHAR(60) NOT NULL,
     phone_number VARCHAR(15) UNIQUE NOT NULL,
     password VARCHAR(64) NOT NULL,
-    successful_login_count INT DEFAULT 0,
+    successful_login_count BIGINT DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+/**
+  A lot of queries using phone number will be executed, so we need to index the phone number.
+ */
+CREATE INDEX idx_users_phone_number ON users (phone_number);
