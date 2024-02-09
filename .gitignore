@@ -34,3 +34,6 @@ generated
 
 # tmp
 tmp/*
+
+# env
+.env

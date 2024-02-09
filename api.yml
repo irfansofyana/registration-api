@@ -45,6 +45,21 @@ paths:
           $ref: "#/components/responses/ErrorResponse"
         '500':
           $ref: "#/components/responses/ErrorResponse"
+  /login:
+    post:
+        summary: Login to the system
+        operationId: loginUser
+        requestBody:
+          $ref: "#/components/requestBodies/LoginRequest"
+        responses:
+          '200':
+            $ref: "#/components/responses/LoginResponse"
+          '400':
+            $ref: "#/components/responses/ErrorResponse"
+          '404':
+            $ref: "#/components/responses/ErrorResponse"
+          '500':
+            $ref: "#/components/responses/ErrorResponse"
 
 components:
   requestBodies:
@@ -53,6 +68,12 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/RegistrationRequest"
+      required: true
+    LoginRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LoginRequest"
       required: true
 
   responses:
@@ -74,6 +95,12 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/RegistrationResponse"
+    LoginResponse:
+      description: Response after user login - return JWT token
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LoginResponse"
 
   schemas:
     HelloResponse:
@@ -117,3 +144,20 @@ components:
           type: string
       required:
         - user_id
+    LoginRequest:
+      type: object
+      properties:
+        phone_number:
+          type: string
+        password:
+          type: string
+      required:
+        - phone_number
+        - password
+    LoginResponse:
+        type: object
+        properties:
+          token:
+            type: string
+        required:
+          - token

@@ -21,7 +21,7 @@ func (s *Server) Hello(ctx echo.Context, params generated.HelloParams) error {
 }
 
 func (s *Server) RegisterUser(ctx echo.Context) error {
-	var req generated.RegisterUserJSONRequestBody
+	var req generated.RegistrationRequest
 	if err := ctx.Bind(&req); err != nil {
 		return newError(ctx, http.StatusBadRequest, "Invalid request")
 	}
@@ -63,10 +63,10 @@ func (s *Server) RegisterUser(ctx echo.Context) error {
 		UserId: id,
 	}
 
-	return ctx.JSON(http.StatusOK, resp)
+	return ctx.JSON(http.StatusCreated, resp)
 }
 
-func validateRegistrationRequest(req generated.RegisterUserJSONRequestBody) error {
+func validateRegistrationRequest(req generated.RegistrationRequest) error {
 	if !validatePassword(req.Password) {
 		return errors.New("password must contain at least one uppercase letter, one digit, and one special character")
 	}

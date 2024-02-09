@@ -1,6 +1,4 @@
-
-
-.PHONY: clean all init generate generate_mocks
+.PHONY: clean all init generate generate_mocks keys
 
 all: build/main
 
@@ -9,9 +7,9 @@ build/main: cmd/main.go generated
 	go build -o $@ $<
 
 clean:
-	rm -rf generated
+	rm -rf generated private.pem public.pem
 
-init: generate
+init: generate keys
 	go mod tidy
 	go mod vendor
 
@@ -19,6 +17,10 @@ test:
 	go test -short -coverprofile coverage.out -v ./...
 
 generate: generated generate_mocks
+
+keys:
+	openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
+	openssl rsa -pubout -in private.pem -out public.pem
 
 generated: api.yml
 	@echo "Generating files..."

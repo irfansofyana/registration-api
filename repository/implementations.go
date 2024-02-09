@@ -16,7 +16,13 @@ func (r *Repository) GetTestById(ctx context.Context, input GetTestByIdInput) (o
 
 func (r *Repository) GetUserByPhoneNumber(ctx context.Context, input GetUserByPhoneNumberInput) (output *GetUserByPhoneNumberOutput, err error) {
 	output = &GetUserByPhoneNumberOutput{}
-	err = r.Db.QueryRowContext(ctx, "SELECT id FROM users WHERE phone_number = $1", input.PhoneNumber).Scan(&output.Id)
+	err = r.Db.QueryRowContext(ctx,
+		"SELECT id, full_name, password FROM users WHERE phone_number = $1",
+		input.PhoneNumber).Scan(
+		&output.Id,
+		&output.FullName,
+		&output.Password,
+	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			output = nil

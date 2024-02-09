@@ -14,7 +14,9 @@ type GetUserByPhoneNumberInput struct {
 }
 
 type GetUserByPhoneNumberOutput struct {
-	Id string
+	Id       string
+	FullName string
+	Password string
 }
 
 type SaveUserInput struct {
