@@ -71,10 +71,33 @@ paths:
             $ref: "#/components/responses/ProfileResponse"
           '400':
             $ref: "#/components/responses/ErrorResponse"
+          '403':
+            $ref: "#/components/responses/ErrorResponse"
           '404':
             $ref: "#/components/responses/ErrorResponse"
           '500':
             $ref: "#/components/responses/ErrorResponse"
+    patch:
+      summary: Update user profile
+      operationId: patchUserProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateUserProfileRequest"
+      responses:
+        '204':
+            description: User profile updated
+        '400':
+          $ref: "#/components/responses/ErrorResponse"
+        '403':
+          $ref: "#/components/responses/ErrorResponse"
+        '404':
+          $ref: "#/components/responses/ErrorResponse"
+        '409':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: "#/components/responses/ErrorResponse"
+
 
 components:
   securitySchemes:
@@ -103,6 +126,12 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/LoginRequest"
+      required: true
+    UpdateUserProfileRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateUserProfileRequest"
       required: true
 
   responses:
@@ -206,3 +235,15 @@ components:
       required:
         - full_name
         - phone_number
+    UpdateUserProfileRequest:
+      type: object
+      properties:
+        full_name:
+          type: string
+          minLength: 3
+          maxLength: 60
+        phone_number:
+          type: string
+          minLength: 10
+          maxLength: 13
+          pattern: '^\+62\d*$'

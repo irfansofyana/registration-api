@@ -92,3 +92,17 @@ func (mr *MockRepositoryInterfaceMockRecorder) UpdateUserLoginCount(ctx, input i
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserLoginCount", reflect.TypeOf((*MockRepositoryInterface)(nil).UpdateUserLoginCount), ctx, input)
 }
+
+// UpdateUserProfile mocks base method.
+func (m *MockRepositoryInterface) UpdateUserProfile(ctx context.Context, input UpdateUserProfileInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserProfile", ctx, input)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserProfile indicates an expected call of UpdateUserProfile.
+func (mr *MockRepositoryInterfaceMockRecorder) UpdateUserProfile(ctx, input interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserProfile", reflect.TypeOf((*MockRepositoryInterface)(nil).UpdateUserProfile), ctx, input)
+}

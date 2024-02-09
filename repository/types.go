@@ -26,6 +26,13 @@ type GetProfileInput struct {
 }
 
 type GetProfileOutput struct {
+	Id          string
+	FullName    string
+	PhoneNumber string
+}
+
+type UpdateUserProfileInput struct {
+	Id          string
 	FullName    string
 	PhoneNumber string
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 )
 
 func (r *Repository) GetUserByPhoneNumber(ctx context.Context, input GetUserByPhoneNumberInput) (output *GetUserByPhoneNumberOutput, err error) {
@@ -40,7 +41,7 @@ func (r *Repository) UpdateUserLoginCount(ctx context.Context, input UpdateUserC
 
 	_, err = tx.ExecContext(
 		ctx,
-		"UPDATE users SET successful_login_count = successful_login_count + 1 WHERE id = $1",
+		"UPDATE users SET successful_login_count = successful_login_count + 1, updated_at = NOW() WHERE id = $1",
 		input.Id,
 	)
 
@@ -60,8 +61,9 @@ func (r *Repository) UpdateUserLoginCount(ctx context.Context, input UpdateUserC
 func (r *Repository) GetProfile(ctx context.Context, input GetProfileInput) (output *GetProfileOutput, err error) {
 	output = &GetProfileOutput{}
 	err = r.Db.QueryRowContext(ctx,
-		"SELECT full_name, phone_number FROM users WHERE id = $1",
+		"SELECT id, full_name, phone_number FROM users WHERE id = $1",
 		input.Id).Scan(
+		&output.Id,
 		&output.FullName,
 		&output.PhoneNumber,
 	)
@@ -72,4 +74,34 @@ func (r *Repository) GetProfile(ctx context.Context, input GetProfileInput) (out
 		}
 	}
 	return
+}
+
+func (r *Repository) UpdateUserProfile(ctx context.Context, input UpdateUserProfileInput) (err error) {
+	query := "UPDATE users SET "
+	params := make([]any, 0)
+	idx := 1
+
+	if input.FullName != "" {
+		query += fmt.Sprintf("full_name = $%d,", idx)
+		params = append(params, input.FullName)
+		idx++
+	}
+
+	if input.PhoneNumber != "" {
+		query += fmt.Sprintf("phone_number = $%d,", idx)
+		params = append(params, input.PhoneNumber)
+		idx++
+	}
+
+	query += fmt.Sprintf(" updated_at = NOW(),")
+
+	query = query[:len(query)-1] + fmt.Sprintf(" WHERE id = $%d", idx)
+	params = append(params, input.Id)
+
+	_, err = r.Db.ExecContext(ctx, query, params...)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

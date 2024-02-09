@@ -68,7 +68,7 @@ func (s *Server) RegisterUser(ctx echo.Context) error {
 
 func validateRegistrationRequest(req generated.RegistrationRequest) error {
 	if !validatePassword(req.Password) {
-		return errors.New("password must contain at least one uppercase letter, one digit, and one special character")
+		return errors.New("Password must contain at least one uppercase letter, one digit, and one special character")
 	}
 	return nil
 }
