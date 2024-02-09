@@ -87,7 +87,7 @@ func TestGetProfile(t *testing.T) {
 		assert.Equal(t, "User is not found", errResponse.Message)
 	})
 
-	t.Run("Successfully", func(t *testing.T) {
+	t.Run("Successful", func(t *testing.T) {
 		e := echo.New()
 		controller := gomock.NewController(t)
 		defer controller.Finish()
@@ -119,6 +119,148 @@ func TestGetProfile(t *testing.T) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 		assert.Equal(t, "Testing full name", profileResponse.FullName)
 		assert.Equal(t, "+628111237878", profileResponse.PhoneNumber)
+	})
+}
+
+func TestUpdateProfile(t *testing.T) {
+	t.Run("No authorization header", func(t *testing.T) {
+		e := echo.New()
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockRepo := repository.NewMockRepositoryInterface(controller)
+		server := &Server{
+			Repository: mockRepo,
+		}
+
+		phoneNumber := "+628111237877"
+		body := generated.UpdateUserProfileRequest{
+			PhoneNumber: &phoneNumber,
+		}
+		jsonBytes, _ := json.Marshal(body)
+
+		req := httptest.NewRequest(http.MethodPatch, "/profile", bytes.NewReader(jsonBytes))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		err := server.PatchUserProfile(c)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusForbidden, rec.Code)
+	})
+
+	t.Run("Invalid authorization header", func(t *testing.T) {
+		e := echo.New()
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockRepo := repository.NewMockRepositoryInterface(controller)
+		server := &Server{
+			Repository: mockRepo,
+		}
+
+		phoneNumber := "+628111237877"
+		body := generated.UpdateUserProfileRequest{
+			PhoneNumber: &phoneNumber,
+		}
+		jsonBytes, _ := json.Marshal(body)
+
+		req := httptest.NewRequest(http.MethodPatch, "/profile", bytes.NewReader(jsonBytes))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		req.Header.Set(echo.HeaderAuthorization, "Bearer invalid-token")
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		err := server.PatchUserProfile(c)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusForbidden, rec.Code)
+	})
+
+	t.Run("Conflict", func(t *testing.T) {
+		e := echo.New()
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockRepo := repository.NewMockRepositoryInterface(controller)
+		server := &Server{
+			Repository: mockRepo,
+		}
+
+		token := getTokenForTest(t)
+		phoneNumber := "+628111237877"
+		body := generated.UpdateUserProfileRequest{
+			PhoneNumber: &phoneNumber,
+		}
+		jsonBytes, _ := json.Marshal(body)
+
+		req := httptest.NewRequest(http.MethodPatch, "/profile", bytes.NewReader(jsonBytes))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		req.Header.Set(echo.HeaderAuthorization, "Bearer "+token)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		mockRepo.EXPECT().GetProfile(gomock.Any(), gomock.Any()).Return(
+			&repository.GetProfileOutput{
+				Id:          "random-id",
+				FullName:    "Testing full name",
+				PhoneNumber: "+628111237878",
+			}, nil)
+		mockRepo.EXPECT().GetUserByPhoneNumber(gomock.Any(), gomock.Any()).Return(
+			&repository.GetUserByPhoneNumberOutput{
+				Id:       "random-id",
+				FullName: "Testing full name",
+				Password: "random-password",
+			}, nil)
+
+		err := server.PatchUserProfile(c)
+
+		var errResponse generated.ErrorResponse
+		_ = json.Unmarshal(rec.Body.Bytes(), &errResponse)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusConflict, rec.Code)
+		assert.Equal(t, "Conflict. Phone number already registered", errResponse.Message)
+	})
+
+	t.Run("Successful", func(t *testing.T) {
+		e := echo.New()
+		controller := gomock.NewController(t)
+		defer controller.Finish()
+
+		mockRepo := repository.NewMockRepositoryInterface(controller)
+		server := &Server{
+			Repository: mockRepo,
+		}
+
+		token := getTokenForTest(t)
+		phoneNumber := "+628111237877"
+		body := generated.UpdateUserProfileRequest{
+			PhoneNumber: &phoneNumber,
+		}
+		jsonBytes, _ := json.Marshal(body)
+
+		req := httptest.NewRequest(http.MethodPatch, "/profile", bytes.NewReader(jsonBytes))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		req.Header.Set(echo.HeaderAuthorization, "Bearer "+token)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		mockRepo.EXPECT().GetProfile(gomock.Any(), gomock.Any()).Return(
+			&repository.GetProfileOutput{
+				Id:          "random-id",
+				FullName:    "Testing full name",
+				PhoneNumber: "+628111237878",
+			}, nil)
+		mockRepo.EXPECT().GetUserByPhoneNumber(gomock.Any(), gomock.Any()).Return(
+			(*repository.GetUserByPhoneNumberOutput)(nil), nil)
+		mockRepo.EXPECT().UpdateUserProfile(gomock.Any(), gomock.Any()).Return(nil)
+
+		err := server.PatchUserProfile(c)
+
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusNoContent, rec.Code)
 	})
 }
 
