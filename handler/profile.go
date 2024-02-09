@@ -47,7 +47,8 @@ func (s *Server) PatchUserProfile(ctx echo.Context) error {
 			return newError(ctx, http.StatusBadRequest, "Phone number already registered")
 		}
 		updateRequest.PhoneNumber = *req.PhoneNumber
-	} else {
+	}
+	if req.FullName != nil {
 		updateRequest.FullName = *req.FullName
 	}
 
