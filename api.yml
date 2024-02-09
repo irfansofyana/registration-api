@@ -17,21 +17,6 @@ info:
 servers:
   - url: http://localhost
 paths:
-  /hello:
-    get:
-      summary: This is just a test endpoint to get you started. Please delete this endpoint.
-      operationId: hello
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          $ref: "#/components/responses/HelloResponse"
-        '404':
-          $ref: "#/components/responses/ErrorResponse"
   /registration:
     post:
       summary: Register a new user to the system
@@ -106,14 +91,6 @@ components:
         scheme: bearer
         bearerFormat: JWT
 
-  parameters:
-    Authorization:
-      name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
-
   requestBodies:
     RegistrationRequest:
       content:
@@ -135,12 +112,6 @@ components:
       required: true
 
   responses:
-    HelloResponse:
-      description: Test return
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/HelloResponse"
     ErrorResponse:
       description: Error response
       content:
@@ -167,13 +138,6 @@ components:
             $ref: "#/components/schemas/ProfileResponse"
 
   schemas:
-    HelloResponse:
-      type: object
-      required:
-        - message
-      properties:
-        message:
-          type: string
     ErrorResponse:
       type: object
       required:
