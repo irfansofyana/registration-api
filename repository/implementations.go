@@ -6,14 +6,6 @@ import (
 	"errors"
 )
 
-func (r *Repository) GetTestById(ctx context.Context, input GetTestByIdInput) (output GetTestByIdOutput, err error) {
-	err = r.Db.QueryRowContext(ctx, "SELECT name FROM test WHERE id = $1", input.Id).Scan(&output.Name)
-	if err != nil {
-		return
-	}
-	return
-}
-
 func (r *Repository) GetUserByPhoneNumber(ctx context.Context, input GetUserByPhoneNumberInput) (output *GetUserByPhoneNumberOutput, err error) {
 	output = &GetUserByPhoneNumberOutput{}
 	err = r.Db.QueryRowContext(ctx,
@@ -27,7 +19,6 @@ func (r *Repository) GetUserByPhoneNumber(ctx context.Context, input GetUserByPh
 		if errors.Is(err, sql.ErrNoRows) {
 			output = nil
 			err = nil
-			return
 		}
 	}
 	return
@@ -78,9 +69,7 @@ func (r *Repository) GetProfile(ctx context.Context, input GetProfileInput) (out
 		if errors.Is(err, sql.ErrNoRows) {
 			output = nil
 			err = nil
-			return
 		}
-		return
 	}
 	return
 }
