@@ -14,7 +14,7 @@ import (
 func (s *Server) LoginUser(ctx echo.Context) error {
 	var req generated.LoginRequest
 	if err := ctx.Bind(&req); err != nil {
-		return newError(ctx, http.StatusBadRequest, "Invalid request: "+err.Error())
+		return newError(ctx, http.StatusBadRequest, "Invalid request payload: "+err.Error())
 	}
 
 	user, err := s.Repository.GetUserByPhoneNumber(
@@ -28,13 +28,18 @@ func (s *Server) LoginUser(ctx echo.Context) error {
 		return newError(ctx, http.StatusNotFound, "User is not found")
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
-	if err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		return newError(ctx, http.StatusUnauthorized, "Invalid password")
 	}
 
 	token, err := createJwtToken(user.Id)
 	if err != nil {
+		return newInternalServerError(ctx, err)
+	}
+
+	if err := s.Repository.UpdateUserLoginCount(ctx.Request().Context(), repository.UpdateUserCountInput{
+		Id: user.Id,
+	}); err != nil {
 		return newInternalServerError(ctx, err)
 	}
 

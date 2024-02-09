@@ -24,3 +24,7 @@ type SaveUserInput struct {
 	PhoneNumber string
 	Password    string
 }
+
+type UpdateUserCountInput struct {
+	Id string
+}

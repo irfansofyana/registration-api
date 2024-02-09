@@ -40,3 +40,28 @@ func (r *Repository) SaveUser(ctx context.Context, input SaveUserInput) (id stri
 		input.FullName, input.PhoneNumber, input.Password).Scan(&id)
 	return
 }
+
+func (r *Repository) UpdateUserLoginCount(ctx context.Context, input UpdateUserCountInput) (err error) {
+	tx, err := r.Db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.ExecContext(
+		ctx,
+		"UPDATE users SET successful_login_count = successful_login_count + 1 WHERE id = $1",
+		input.Id,
+	)
+
+	if err != nil {
+		_ = tx.Rollback()
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
