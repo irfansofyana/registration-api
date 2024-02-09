@@ -14,7 +14,7 @@ import (
 func (s *Server) LoginUser(ctx echo.Context) error {
 	var req generated.LoginRequest
 	if err := ctx.Bind(&req); err != nil {
-		return newError(ctx, http.StatusBadRequest, "Invalid request payload: "+err.Error())
+		return newError(ctx, http.StatusBadRequest, "Invalid request body: "+err.Error())
 	}
 
 	user, err := s.Repository.GetUserByPhoneNumber(

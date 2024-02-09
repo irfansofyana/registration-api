@@ -23,7 +23,7 @@ func (s *Server) Hello(ctx echo.Context, params generated.HelloParams) error {
 func (s *Server) RegisterUser(ctx echo.Context) error {
 	var req generated.RegistrationRequest
 	if err := ctx.Bind(&req); err != nil {
-		return newError(ctx, http.StatusBadRequest, "Invalid request")
+		return newError(ctx, http.StatusBadRequest, "Invalid request body: "+err.Error())
 	}
 
 	if err := validateRegistrationRequest(req); err != nil {

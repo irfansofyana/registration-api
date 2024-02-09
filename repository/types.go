@@ -28,3 +28,12 @@ type SaveUserInput struct {
 type UpdateUserCountInput struct {
 	Id string
 }
+
+type GetProfileInput struct {
+	Id string
+}
+
+type GetProfileOutput struct {
+	FullName    string
+	PhoneNumber string
+}

@@ -65,3 +65,22 @@ func (r *Repository) UpdateUserLoginCount(ctx context.Context, input UpdateUserC
 
 	return nil
 }
+
+func (r *Repository) GetProfile(ctx context.Context, input GetProfileInput) (output *GetProfileOutput, err error) {
+	output = &GetProfileOutput{}
+	err = r.Db.QueryRowContext(ctx,
+		"SELECT full_name, phone_number FROM users WHERE id = $1",
+		input.Id).Scan(
+		&output.FullName,
+		&output.PhoneNumber,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			output = nil
+			err = nil
+			return
+		}
+		return
+	}
+	return
+}

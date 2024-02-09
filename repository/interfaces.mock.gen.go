@@ -34,6 +34,21 @@ func (m *MockRepositoryInterface) EXPECT() *MockRepositoryInterfaceMockRecorder 
 	return m.recorder
 }
 
+// GetProfile mocks base method.
+func (m *MockRepositoryInterface) GetProfile(ctx context.Context, input GetProfileInput) (*GetProfileOutput, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetProfile", ctx, input)
+	ret0, _ := ret[0].(*GetProfileOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetProfile indicates an expected call of GetProfile.
+func (mr *MockRepositoryInterfaceMockRecorder) GetProfile(ctx, input interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProfile", reflect.TypeOf((*MockRepositoryInterface)(nil).GetProfile), ctx, input)
+}
+
 // GetTestById mocks base method.
 func (m *MockRepositoryInterface) GetTestById(ctx context.Context, input GetTestByIdInput) (GetTestByIdOutput, error) {
 	m.ctrl.T.Helper()
@@ -77,4 +92,18 @@ func (m *MockRepositoryInterface) SaveUser(ctx context.Context, input SaveUserIn
 func (mr *MockRepositoryInterfaceMockRecorder) SaveUser(ctx, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveUser", reflect.TypeOf((*MockRepositoryInterface)(nil).SaveUser), ctx, input)
+}
+
+// UpdateUserLoginCount mocks base method.
+func (m *MockRepositoryInterface) UpdateUserLoginCount(ctx context.Context, input UpdateUserCountInput) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserLoginCount", ctx, input)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserLoginCount indicates an expected call of UpdateUserLoginCount.
+func (mr *MockRepositoryInterfaceMockRecorder) UpdateUserLoginCount(ctx, input interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserLoginCount", reflect.TypeOf((*MockRepositoryInterface)(nil).UpdateUserLoginCount), ctx, input)
 }
