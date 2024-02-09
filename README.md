@@ -1,5 +1,3 @@
-# Backend Engineering Interview Assignment (Golang)
-
 ## Requirements
 
 To run this project you need to have the following installed:
@@ -20,6 +18,12 @@ To run this project you need to have the following installed:
     ```
     go install github.com/golang/mock/mockgen@latest
     ```
+7. [OpenSSL](https://www.openssl.org/)
+
+    Install the latest version with:
+    ```
+    sudo apt-get install openssl
+    ```
 
 ## Initiate The Project
 
@@ -28,6 +32,8 @@ To start working, execute
 ```
 make init
 ```
+
+It will init the project by installing the dependencies and generating the code.
 
 ## Running
 
@@ -51,4 +57,12 @@ To run test, run the following command:
 
 ```
 make test
+```
+
+## Clean Up
+
+To clean up the project, run the following command:
+
+```
+make clean
 ```
