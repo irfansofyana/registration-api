@@ -15,7 +15,7 @@ func (s *Server) authCheck(ctx echo.Context) (*repository.GetProfileOutput, *cus
 	headers := ctx.Request().Header
 
 	token := headers.Get("Authorization")
-	userId, err := validateAuthHeader(ctx, token)
+	userId, err := validateAuthHeader(token)
 	if err != nil {
 		return nil, newCustomError(http.StatusForbidden, "Invalid authorization token: "+err.Error())
 	}
@@ -27,15 +27,15 @@ func (s *Server) authCheck(ctx echo.Context) (*repository.GetProfileOutput, *cus
 		return nil, newCustomError(http.StatusInternalServerError, err.Error())
 	}
 	if profile == nil {
-		return nil, newCustomError(http.StatusNotFound, "User not found")
+		return nil, newCustomError(http.StatusNotFound, "User is not found")
 	}
 
 	return profile, nil
 }
 
-func validateAuthHeader(ctx echo.Context, token string) (string, error) {
+func validateAuthHeader(token string) (string, error) {
 	if token == "" || !strings.HasPrefix(token, "Bearer ") {
-		return "", newError(ctx, http.StatusUnauthorized, "Authorization header is missing")
+		return "", errors.New("missing or invalid authorization header")
 	}
 
 	removedPrefix := strings.TrimPrefix(token, "Bearer ")
