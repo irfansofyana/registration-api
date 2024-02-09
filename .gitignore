@@ -31,3 +31,6 @@ generated
 
 # Intellij
 .idea
+
+# tmp
+tmp/*
